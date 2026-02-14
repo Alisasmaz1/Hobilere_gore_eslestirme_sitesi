@@ -57,8 +57,8 @@ def veritabani_baglantisi():
 uygulama = Flask(__name__)
 uygulama.secret_key = 'gizli-anahtar-buraya-rastgele-yaz'
 
-GMAIL_ADRES = "alisasmazsaid@gmail.com"
-GMAIL_SIFRE = "shvp qmaz yevh ujrg"
+GMAIL_ADRES = os.getenv("EMAIL_USER")
+GMAIL_SIFRE = os.getenv("EMAIL_PASS")
 
 
 kullanici_verileri = {}
