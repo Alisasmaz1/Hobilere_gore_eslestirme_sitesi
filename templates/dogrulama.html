@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Doğrulama Kodu</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        .hata-mesaji {
+            background: #dc2626;
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+            animation: shake 0.5s;
+        }
+
+        .hata-mesaji.goster {
+            display: block;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #000000;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .container {
+            background: #1a1a1a;
+            padding: 50px 40px;
+            border-radius: 15px;
+            width: 450px;
+            border: 1px solid #dc2626;
+            text-align: center;
+        }
+        
+        h1 {
+            color: #ffffff;
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+        
+        .subtitle {
+            color: #cccccc;
+            margin-bottom: 35px;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+        
+        .kod-uyari {
+            background: #dc2626;
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+            font-size: 13px;
+        }
+        
+        .form-group {
+            margin-bottom: 25px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 10px;
+            color: #cccccc;
+            font-size: 14px;
+        }
+        
+        input[type="text"] {
+            width: 100%;
+            padding: 14px;
+            background: #0a0a0a;
+            border: 1px solid #333333;
+            border-radius: 8px;
+            font-size: 24px;
+            color: #ffffff;
+            text-align: center;
+            letter-spacing: 8px;
+            transition: border-color 0.3s;
+        }
+        
+        input:focus {
+            outline: none;
+            border-color: #dc2626;
+        }
+        
+        input::placeholder {
+            color: #666666;
+            letter-spacing: normal;
+            font-size: 16px;
+        }
+        
+        button {
+            width: 100%;
+            padding: 14px;
+            background: #dc2626;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        
+        button:hover {
+            background: #b91c1c;
+        }
+        
+        .geri-don {
+            margin-top: 20px;
+            background: transparent;
+            border: 1px solid #666666;
+            color: #cccccc;
+        }
+        
+        .geri-don:hover {
+            background: #2a2a2a;
+            border-color: #dc2626;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Doğrulama Kodu</h1>
+        <div class="subtitle">
+            Email adresinize gönderilen 6 haneli kodu girin
+        </div>
+        
+        <form action="/kod-dogrula" method="POST">
+            <div class="form-group">
+                <label for="kod">Doğrulama Kodu</label>
+                <input type="text" id="kod" name="kod" required placeholder="123456" maxlength="6" pattern="\d{6}">
+            </div>
+            <div class="hata-mesaji" id="hataMesaji">
+                ✗ Kod yanlış! Lütfen tekrar deneyin.
+            </div>
+            
+            <button type="submit">Doğrula</button>
+        </form>
+        
+        <button class="geri-don" onclick="window.location.href='/'">Geri Dön</button>
+    </div>
+    
+    <script>
+    document.getElementById('kod').addEventListener('input', function(e) {
+        this.value = this.value.replace(/[^0-9]/g, '');
+    });
+    
+    document.querySelector('form').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const form = this;
+        const kod = document.getElementById('kod').value;
+        
+        fetch('/kod-dogrula', {
+            method: 'POST',
+            body: new FormData(form)
+        })
+        .then(response => {
+            if (response.redirected) {
+                if (!response.url.includes('dogrulama')) { 
+                    window.location.href = response.url;
+                } else {
+                    document.getElementById('hataMesaji').classList.add('goster');
+                    document.getElementById('kod').value = '';
+                }
+            }
+        });
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Şifre Belirle</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #000000;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            display: none;
+            z-index: 999;
+        }
+        
+        .overlay.goster {
+            display: block;
+        }
+        
+        .container {
+            background: #1a1a1a;
+            padding: 50px 40px;
+            border-radius: 15px;
+            width: 450px;
+            border: 1px solid #dc2626;
+        }
+        
+        h1 {
+            text-align: center;
+            color: #ffffff;
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+        
+        .subtitle {
+            text-align: center;
+            color: #dc2626;
+            margin-bottom: 35px;
+            font-size: 14px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+            position: relative;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #cccccc;
+            font-size: 14px;
+        }
+        
+        input[type="password"],
+        input[type="text"] {
+            width: 100%;
+            padding: 14px 45px 14px 14px;
+            background: #0a0a0a;
+            border: 1px solid #333333;
+            border-radius: 8px;
+            font-size: 16px;
+            color: #ffffff;
+            transition: border-color 0.3s;
+        }
+        
+        input:focus {
+            outline: none;
+            border-color: #dc2626;
+        }
+        
+        input::placeholder {
+            color: #666666;
+        }
+        
+        .goz-ikonu {
+            position: absolute;
+            right: 15px;
+            top: 43px;
+            cursor: pointer;
+            color: #cccccc;
+            font-size: 18px;
+            user-select: none;
+        }
+        
+        .goz-ikonu:hover {
+            color: #dc2626;
+        }
+        
+        button {
+            width: 100%;
+            padding: 14px;
+            background: #dc2626;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s;
+            margin-top: 10px;
+        }
+        
+        button:hover {
+            background: #b91c1c;
+        }
+        
+        .sifre-bilgi {
+            background: rgba(220, 38, 38, 0.1);
+            border: 1px solid rgba(220, 38, 38, 0.3);
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 13px;
+            color: #cccccc;
+        }
+        
+        .hata-mesaji {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: #1a1a1a;
+            padding: 40px 50px;
+            border-radius: 15px;
+            border: 2px solid #dc2626;
+            display: none;
+            z-index: 1000;
+            text-align: center;
+            box-shadow: 0 0 50px rgba(220, 38, 38, 0.5);
+        }
+        
+        .hata-mesaji.goster {
+            display: block;
+        }
+        
+        .hata-mesaji h2 {
+            color: #dc2626;
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+        
+        .hata-mesaji p {
+            color: #cccccc;
+            margin-bottom: 25px;
+            font-size: 16px;
+        }
+        
+        .hata-mesaji button {
+            padding: 12px 30px;
+            background: #dc2626;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background 0.3s;
+            margin-top: 0;
+            width: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="overlay" id="overlay"></div>
+    
+    <div class="hata-mesaji" id="hataMesaji">
+        <h2>⚠️ Hata</h2>
+        <p id="hataMesajMetni"></p>
+        <button onclick="hataKapat()">Tamam</button>
+    </div>
+    
+    <div class="container">
+        <h1>Şifre Belirle</h1>
+        <div class="subtitle">Son adım! Hesabınız için bir şifre oluşturun</div>
+        
+        <div class="sifre-bilgi">
+            ℹ️ Şifreniz en az 6 karakter olmalıdır.
+        </div>
+        
+        <form action="/sifre-kaydet" method="POST">
+            <div class="form-group">
+                <label for="sifre">Şifre</label>
+                <input type="password" id="sifre" name="sifre" required placeholder="Şifrenizi girin" minlength="6">
+                <span class="goz-ikonu" onclick="sifreGoster('sifre', this)">👁️</span>
+            </div>
+            
+            <div class="form-group">
+                <label for="sifre_tekrar">Şifre Tekrar</label>
+                <input type="password" id="sifre_tekrar" name="sifre_tekrar" required placeholder="Şifrenizi tekrar girin" minlength="6">
+                <span class="goz-ikonu" onclick="sifreGoster('sifre_tekrar', this)">👁️</span>
+            </div>
+            
+            <button type="submit">Hesap Oluştur</button>
+        </form>
+    </div>
+    
+    <script>
+        function sifreGoster(inputId, icon) {
+            const input = document.getElementById(inputId);
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.textContent = '🙈';
+            } else {
+                input.type = 'password';
+                icon.textContent = '👁️';
+            }
+        }
+        
+        function hataKapat() {
+            document.getElementById('hataMesaji').classList.remove('goster');
+            document.getElementById('overlay').classList.remove('goster');
+        }
+        
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('hata') === 'eslesmiyor') {
+            document.getElementById('hataMesajMetni').textContent = 'Şifreler eşleşmiyor. Lütfen aynı şifreyi girin.';
+            document.getElementById('hataMesaji').classList.add('goster');
+            document.getElementById('overlay').classList.add('goster');
+        } else if (urlParams.get('hata') === 'kisa') {
+            document.getElementById('hataMesajMetni').textContent = 'Şifre en az 6 karakter olmalıdır.';
+            document.getElementById('hataMesaji').classList.add('goster');
+            document.getElementById('overlay').classList.add('goster');
+        }
+    </script>
+</body>
+</html>

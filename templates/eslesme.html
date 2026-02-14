@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Eşleşme Bulunuyor...</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #000000;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: #ffffff;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .particles {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+        
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: #dc2626;
+            border-radius: 50%;
+            opacity: 0;
+            animation: float-particle 8s infinite;
+        }
+        
+        @keyframes float-particle {
+            0% {
+                opacity: 0;
+                transform: translateY(100vh) scale(0);
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                opacity: 0;
+                transform: translateY(-100vh) scale(1);
+            }
+        }
+        
+        .container {
+            text-align: center;
+            z-index: 1;
+            padding: 40px;
+        }
+        
+        h1 {
+            font-size: 36px;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, #ffffff 0%, #dc2626 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .subtitle {
+            font-size: 18px;
+            color: #cccccc;
+            margin-bottom: 50px;
+        }
+        
+        .loader-container {
+            position: relative;
+            width: 200px;
+            height: 200px;
+            margin: 0 auto 40px;
+        }
+        
+        .loader {
+            width: 100%;
+            height: 100%;
+            border: 4px solid rgba(220, 38, 38, 0.1);
+            border-top: 4px solid #dc2626;
+            border-radius: 50%;
+            animation: spin 1.5s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .loader-inner {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 140px;
+            height: 140px;
+            border: 4px solid rgba(220, 38, 38, 0.2);
+            border-bottom: 4px solid #dc2626;
+            border-radius: 50%;
+            animation: spin-reverse 2s linear infinite;
+        }
+        
+        @keyframes spin-reverse {
+            0% { transform: translate(-50%, -50%) rotate(360deg); }
+            100% { transform: translate(-50%, -50%) rotate(0deg); }
+        }
+        
+        .loader-center {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 48px;
+            animation: pulse 2s ease-in-out infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% {
+                transform: translate(-50%, -50%) scale(1);
+                opacity: 1;
+            }
+            50% {
+                transform: translate(-50%, -50%) scale(1.1);
+                opacity: 0.8;
+            }
+        }
+
+        .timer {
+            font-size: 24px;
+            color: #dc2626;
+            margin-bottom: 30px;
+            font-weight: 600;
+        }
+        
+        .status-messages {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .status-message {
+            font-size: 16px;
+            color: #999999;
+            margin: 10px 0;
+            opacity: 0;
+            animation: fade-in-out 3s ease-in-out;
+        }
+        
+        @keyframes fade-in-out {
+            0% { opacity: 0; transform: translateY(10px); }
+            10% { opacity: 1; transform: translateY(0); }
+            90% { opacity: 1; transform: translateY(0); }
+            100% { opacity: 0; transform: translateY(-10px); }
+        }
+        
+        .progress-container {
+            width: 400px;
+            height: 6px;
+            background: rgba(220, 38, 38, 0.2);
+            border-radius: 3px;
+            margin: 30px auto;
+            overflow: hidden;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #dc2626 0%, #991b1b 100%);
+            border-radius: 3px;
+            width: 0%;
+            animation: progress 10s linear forwards;
+        }
+        
+    </style>
+</head>
+<body>
+    <div class="particles" id="particles"></div>
+    
+    <div class="container">
+        <h1>Eşleşme Bulunuyor...</h1>
+        <div class="subtitle">Sizin için en uygun kişiyi arıyoruz</div>
+        
+        <div class="loader-container">
+            <div class="loader"></div>
+            <div class="loader-inner"></div>
+            <div class="loader-center">❤️</div>
+        </div>
+        
+        <div class="timer">
+            <span id="timer">0</span> saniye geçti...
+        </div>
+        
+        <div class="status-messages" id="statusMessages">
+            <div class="status-message" style="animation-delay: 0s;">📊 Tercihleriniz analiz ediliyor...</div>
+            <div class="status-message" style="animation-delay: 3s;">🔍 Uyumlu kullanıcılar aranıyor...</div>
+            <div class="status-message" style="animation-delay: 6s;">📈 Makine öğrenmesi modeli çalışıyor...</div>
+            <div class="status-message" style="animation-delay: 9s;">🧮 Benzerlik skorları hesaplanıyor...</div>
+            <div class="status-message" style="animation-delay: 12s;">💫 En iyi eşleşme hesaplanıyor...</div>
+            <div class="status-message" style="animation-delay: 15s;">✨ Sonuçlar hazırlanıyor...</div>
+        </div>
+    </div>
+    <script>
+        const particlesContainer = document.getElementById('particles');
+        for (let i = 0; i < 30; i++) {
+            const particle = document.createElement('div');
+            particle.className = 'particle';
+            particle.style.left = Math.random() * 100 + '%';
+            particle.style.animationDelay = Math.random() * 8 + 's';
+            particlesContainer.appendChild(particle);
+        }
+        
+        const timerElement = document.getElementById('timer');
+        const statusMessages = document.querySelectorAll('.status-message');
+        
+        let elapsedTime = 0;
+        let messageIndex = 0;
+
+        const timer = setInterval(() => {
+            elapsedTime++;
+            timerElement.textContent = elapsedTime;
+            
+            if (elapsedTime % 3 === 0 && messageIndex < statusMessages.length) {
+                messageIndex++;
+            }
+        }, 1000);
+
+        fetch('/eslesme-hesapla', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            clearInterval(timer);
+            
+            if (data.basarili) {
+                console.log('✅ Eşleşme tamamlandı');
+                setTimeout(() => {
+                    window.location.href = '/sonuc';
+                }, 500);
+            } else {
+                console.error('❌ Eşleşme başarısız');
+                alert('Eşleşme hesaplaması başarısız oldu!');
+                window.location.href = '/filmler';
+            }
+        })
+        .catch(error => {
+            clearInterval(timer);
+            console.error('❌ Hata:', error);
+            alert('Bir hata oluştu!');
+            window.location.href = '/filmler';
+        });
+    </script>
+</body>
+</html>

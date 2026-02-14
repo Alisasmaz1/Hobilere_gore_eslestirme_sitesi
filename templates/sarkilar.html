@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Şarkı Seçimi</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #000000;
+            color: #ffffff;
+            padding: 20px;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+        }
+        
+        .header h1 {
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            color: #dc2626;
+            font-size: 16px;
+        }
+        
+        .arama-bolumu {
+            max-width: 1200px;
+            margin: 0 auto 30px;
+            position: sticky;
+            top: 20px;
+            z-index: 100;
+            background: #1a1a1a;
+            padding: 20px;
+            border-radius: 10px;
+            border: 1px solid #dc2626;
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+        
+        .arama-kutusu {
+            flex: 1;
+            padding: 12px 20px;
+            background: #0a0a0a;
+            border: 1px solid #333333;
+            border-radius: 8px;
+            color: #ffffff;
+            font-size: 16px;
+        }
+        
+        .arama-kutusu:focus {
+            outline: none;
+            border-color: #dc2626;
+        }
+        
+        .secim-sayaci {
+            color: #dc2626;
+            font-weight: 600;
+            font-size: 18px;
+            white-space: nowrap;
+        }
+        
+        .devam-butonu {
+            padding: 12px 30px;
+            background: #dc2626;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s;
+            white-space: nowrap;
+        }
+        
+        .devam-butonu:hover {
+            background: #b91c1c;
+        }
+        
+        .devam-butonu:disabled {
+            background: #555555;
+            cursor: not-allowed;
+        }
+        
+        .sarki-grid {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 25px;
+            padding: 20px;
+        }
+        
+        .sarki-kart {
+            cursor: pointer;
+            transition: transform 0.3s;
+            position: relative;
+        }
+        
+        .sarki-kart:hover {
+            transform: scale(1.1);
+            z-index: 10;
+        }
+        
+        .sarki-kapak {
+            width: 100%;
+            height: 270px;
+            object-fit: cover;
+            border-radius: 10px;
+            border: 2px solid #333333;
+            transition: border-color 0.3s;
+        }
+        
+        .sarki-kart.secili .sarki-kapak {
+            border-color: #22c55e;
+        }
+        
+        .tik-isaretli {
+            position: absolute;
+            top: 8px;
+            left: 8px;
+            width: 30px;
+            height: 30px;
+            background: #22c55e;
+            border-radius: 50%;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 18px;
+        }
+        
+        .sarki-kart.secili .tik-isaretli {
+            display: flex;
+        }
+        
+        .sarki-isim {
+            text-align: center;
+            margin-top: 10px;
+            font-size: 14px;
+            color: #cccccc;
+        }
+        
+        .muzik-kontrol {
+            margin-top: 10px;
+            background: #1a1a1a;
+            padding: 10px;
+            border-radius: 8px;
+        }
+        
+        .oynat-buton {
+            width: 100%;
+            padding: 8px;
+            background: #dc2626;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-bottom: 8px;
+            transition: background 0.3s;
+        }
+        
+        .oynat-buton:hover {
+            background: #b91c1c;
+        }
+        
+        .oynat-buton.oynatiliyor {
+            background: #22c55e;
+        }
+        
+        .ilerleme-container {
+            width: 100%;
+            height: 6px;
+            background: #333333;
+            border-radius: 3px;
+            position: relative;
+            cursor: pointer;
+        }
+        
+        .ilerleme-bar {
+            height: 100%;
+            background: #dc2626;
+            border-radius: 3px;
+            width: 0%;
+            transition: width 0.1s;
+        }
+        
+        .ilerleme-handle {
+            position: absolute;
+            top: 50%;
+            left: 0%;
+            transform: translate(-50%, -50%);
+            width: 14px;
+            height: 14px;
+            background: #ffffff;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .zaman-gosterge {
+            display: flex;
+            justify-content: space-between;
+            font-size: 11px;
+            color: #888888;
+            margin-top: 4px;
+        }
+        
+        .uyari-mesaji {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: #1a1a1a;
+            padding: 30px 50px;
+            border-radius: 10px;
+            border: 2px solid #dc2626;
+            display: none;
+            z-index: 1000;
+            text-align: center;
+        }
+        
+        .uyari-mesaji.goster {
+            display: block;
+        }
+        
+        .uyari-mesaji h2 {
+            color: #dc2626;
+            margin-bottom: 15px;
+        }
+        
+        .uyari-mesaji button {
+            margin-top: 20px;
+            padding: 10px 30px;
+            background: #dc2626;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Şarkı Seçimi</h1>
+        <p>Minimum 1 , Maksimum 10 tane en sevdiğiniz Şarkıları seçin</p>
+    </div>
+    <div class="arama-bolumu">
+        <input type="text" class="arama-kutusu" id="aramaKutusu" placeholder="Şarkı ara...">
+        <span class="secim-sayaci"><span id="secimSayisi">0</span> / 10</span>
+        <button class="devam-butonu" id="devamButonu" disabled>Devam Et</button>
+    </div>
+    
+    <div class="sarki-grid" id="sarkilarGrid">
+        {% for sarki in sarkilar %}
+        <div class="sarki-kart" data-sarki-id="{{ sarki.id }}" data-sarki-isim="{{ sarki.isim }}" onclick="sarkiSec(event, '{{ sarki.id }}')">
+            <div class="tik-isaretli">✓</div>
+                <img src="/static/sarkilar/{{ sarki.klasor | urlencode }}/cover.jpg" alt="{{ sarki.isim }}" class="sarki-kapak">
+            <div class="sarki-isim">{{ sarki.isim }}</div>
+            
+            <div class="muzik-kontrol" onclick="event.stopPropagation()">
+                <button class="oynat-buton" onclick="oynatDurdur('{{ sarki.id }}' , '{{ sarki.klasor }}')">
+                    ▶ Dinle
+                </button>
+                
+                <div class="ilerleme-container" onclick="ilerle(event, '{{ sarki.id }}')">
+                    <div class="ilerleme-bar" id="ilerleme-{{ sarki.id }}"></div>
+                    <div class="ilerleme-handle" id="handle-{{ sarki.id }}"></div>
+                </div>
+                
+                <div class="zaman-gosterge">
+                    <span id="mevcut-{{ sarki.id }}">0:00</span>
+                    <span id="toplam-{{ sarki.id }}">0:30</span>
+                </div>
+            </div>
+            
+            <audio id="audio-{{ sarki.id }}" preload="metadata" controls style="display:none;">
+                <source src="{{ url_for('sarki_cal', klasor=sarki.klasor) }}" type="audio/mpeg">
+            </audio>
+        </div>
+        {% endfor %}
+    </div>
+    
+    <div class="uyari-mesaji" id="uyariMesaji">
+        <h2>Uyarı</h2>
+        <p id="uyariMetni"></p>
+        <button onclick="uyariKapat()">Tamam</button>
+    </div>
+    
+    <script>
+        let seciliSarkilar = [];
+        const maxSarkiSayisi = 10;
+        const minSarkiSayisi = 1;
+        let aktifAudio = null;
+        let aktifSarkiId = null;
+        
+        const sarkilarKartlari = document.querySelectorAll('.sarki-kart');
+        const secimSayisiElement = document.getElementById('secimSayisi');
+        const devamButonu = document.getElementById('devamButonu');
+        const aramaKutusu = document.getElementById('aramaKutusu');
+        
+
+        function sarkiSec(event, sarkiId) {
+            const kart = event.currentTarget;
+            
+            if (seciliSarkilar.includes(sarkiId)) {
+                seciliSarkilar = seciliSarkilar.filter(id => id !== sarkiId);
+                kart.classList.remove('secili');
+            } else {
+                if (seciliSarkilar.length >= maxSarkiSayisi) {
+                    uyariGoster('En fazla ' + maxSarkiSayisi + ' şarkı seçebilirsiniz!');
+                    return;
+                }
+                seciliSarkilar.push(sarkiId);
+                kart.classList.add('secili');
+            }
+            
+            secimSayisiGuncelle();
+        }
+        
+
+        function secimSayisiGuncelle() {
+            secimSayisiElement.textContent = seciliSarkilar.length;
+            
+            if (seciliSarkilar.length >= minSarkiSayisi && seciliSarkilar.length <= maxSarkiSayisi) {
+                devamButonu.disabled = false;
+            } else {
+                devamButonu.disabled = true;
+            }
+        }
+
+        function oynatDurdur(sarkiId, klasor) {
+            const audio = document.getElementById(`audio-${sarkiId}`);
+            const buton = event.target;
+            
+            if (aktifAudio && aktifSarkiId !== sarkiId) {
+                aktifAudio.pause();
+                aktifAudio.currentTime = 0;
+                const eskiButon = document.querySelector(`#audio-${aktifSarkiId}`).parentElement.querySelector('.oynat-buton');
+                eskiButon.textContent = '▶ Dinle';
+                eskiButon.classList.remove('oynatiliyor');
+            }
+            
+            if (audio.paused) {
+                audio.play();
+                buton.textContent = '⏸ Durdur';
+                buton.classList.add('oynatiliyor');
+                aktifAudio = audio;
+                aktifSarkiId = sarkiId;
+                
+                audio.addEventListener('timeupdate', function() {
+                    const yuzde = (audio.currentTime / audio.duration) * 100;
+                    document.getElementById(`ilerleme-${sarkiId}`).style.width = yuzde + '%';
+                    document.getElementById(`handle-${sarkiId}`).style.left = yuzde + '%';
+                    
+                    const dakika = Math.floor(audio.currentTime / 60);
+                    const saniye = Math.floor(audio.currentTime % 60);
+                    document.getElementById(`mevcut-${sarkiId}`).textContent = 
+                        `${dakika}:${saniye.toString().padStart(2, '0')}`;
+                });
+                
+                audio.addEventListener('ended', function() {
+                    buton.textContent = '▶ Dinle';
+                    buton.classList.remove('oynatiliyor');
+                    audio.currentTime = 0;
+                    document.getElementById(`ilerleme-${sarkiId}`).style.width = '0%';
+                    document.getElementById(`handle-${sarkiId}`).style.left = '0%';
+                    aktifAudio = null;
+                    aktifSarkiId = null;
+                });
+            } else {
+                audio.pause();
+                buton.textContent = '▶ Dinle';
+                buton.classList.remove('oynatiliyor');
+            }
+        }
+        
+        function ilerle(event, sarkiId) {
+            const audio = document.getElementById(`audio-${sarkiId}`);
+            const container = event.currentTarget;
+            const rect = container.getBoundingClientRect();
+            const x = event.clientX - rect.left;
+            const genislik = rect.width;
+            const yuzde = x / genislik;
+            
+            audio.currentTime = yuzde * audio.duration;
+        }
+        
+
+        aramaKutusu.addEventListener('input', function() {
+            const aramaMetni = this.value.toLowerCase();
+            
+            sarkilarKartlari.forEach(kart => {
+                const sarkilarIsmi = kart.getAttribute('data-sarki-isim').toLowerCase();
+                
+                if (sarkilarIsmi.includes(aramaMetni)) {
+                    kart.style.display = 'block';
+                } else {
+                    kart.style.display = 'none';
+                }
+            });
+        });
+        
+
+        devamButonu.addEventListener('click', function() {
+            if (seciliSarkilar.length < minSarkiSayisi || seciliSarkilar.length > maxSarkiSayisi) {
+                uyariGoster('En az ' + minSarkiSayisi + ' ve en fazla ' + maxSarkiSayisi + ' şarkı seçmelisiniz!');
+                return;
+            }
+            
+            fetch('/sarki-kaydet', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    secili_sarkilar: seciliSarkilar
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.basarili) {
+                    window.location.href = '/kitaplar';
+                }
+            })
+            .catch(error => {
+                uyariGoster('Bir hata oluştu: ' + error);
+            });
+        });
+        
+        function uyariGoster(mesaj) {
+            document.getElementById('uyariMetni').textContent = mesaj;
+            document.getElementById('uyariMesaji').classList.add('goster');
+        }
+        
+        function uyariKapat() {
+            document.getElementById('uyariMesaji').classList.remove('goster');
+        }
+    </script>
+</body>
+</html>

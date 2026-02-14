@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>fobi Seçimi</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #000000;
+            color: #ffffff;
+            padding: 20px;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+        }
+        
+        .header h1 {
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            color: #dc2626;
+            font-size: 16px;
+        }
+        
+        .arama-bolumu {
+            max-width: 1200px;
+            margin: 0 auto 30px;
+            position: sticky;
+            top: 20px;
+            z-index: 100;
+            background: #1a1a1a;
+            padding: 20px;
+            border-radius: 10px;
+            border: 1px solid #dc2626;
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+        
+        .arama-kutusu {
+            flex: 1;
+            padding: 12px 20px;
+            background: #0a0a0a;
+            border: 1px solid #333333;
+            border-radius: 8px;
+            color: #ffffff;
+            font-size: 16px;
+        }
+        
+        .arama-kutusu:focus {
+            outline: none;
+            border-color: #dc2626;
+        }
+        
+        .secim-sayaci {
+            color: #dc2626;
+            font-weight: 600;
+            font-size: 18px;
+            white-space: nowrap;
+        }
+        
+        .devam-butonu {
+            padding: 12px 30px;
+            background: #dc2626;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s;
+            white-space: nowrap;
+        }
+        
+        .devam-butonu:hover {
+            background: #b91c1c;
+        }
+        
+        .devam-butonu:disabled {
+            background: #555555;
+            cursor: not-allowed;
+        }
+        
+        .fobi-grid {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 25px;
+            padding: 20px;
+        }
+        
+        .fobi-kart {
+            cursor: pointer;
+            transition: transform 0.3s;
+            position: relative;
+        }
+        
+        .fobi-kart:hover {
+            transform: scale(1.1);
+            z-index: 10;
+        }
+        
+        .fobi-resim {
+            width: 100%;
+            height: 270px;
+            object-fit: cover;
+            border-radius: 10px;
+            border: 2px solid #333333;
+            transition: border-color 0.3s;
+        }
+        
+        .fobi-kart.secili .fobi-resim {
+            border-color: #22c55e;
+        }
+        
+        .tik-isaretli {
+            position: absolute;
+            top: 8px;
+            left: 8px;
+            width: 30px;
+            height: 30px;
+            background: #22c55e;
+            border-radius: 50%;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 18px;
+        }
+        
+        .fobi-kart.secili .tik-isaretli {
+            display: flex;
+        }
+        
+        .fobi-isim {
+            text-align: center;
+            margin-top: 10px;
+            font-size: 14px;
+            color: #cccccc;
+        }
+        
+        .uyari-mesaji {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: #1a1a1a;
+            padding: 30px 50px;
+            border-radius: 10px;
+            border: 2px solid #dc2626;
+            display: none;
+            z-index: 1000;
+            text-align: center;
+        }
+        
+        .uyari-mesaji.goster {
+            display: block;
+        }
+        
+        .uyari-mesaji h2 {
+            color: #dc2626;
+            margin-bottom: 15px;
+        }
+        
+        .uyari-mesaji button {
+            margin-top: 20px;
+            padding: 10px 30px;
+            background: #dc2626;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+        .fobi-aciklama {
+            text-align: center;
+            font-size: 13px;
+            color: #9ca3af;
+            margin-top: 5px;
+            padding: 0 10px 10px; 
+            line-height: 1.4;      
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Fobi Seçimi</h1>
+        <p>Minimum 1 , Maksimum 10 tane sahip olduğunuz Fobileri seçin</p>
+    </div>
+    
+    <div class="arama-bolumu">
+        <input type="text" class="arama-kutusu" id="aramaKutusu" placeholder="Fobi ara...">
+        <span class="secim-sayaci"><span id="secimSayisi">0</span> / 10</span>
+        <button class="devam-butonu" id="devamButonu" disabled>Devam Et</button>
+    </div>
+    
+    <div class="fobi-grid" id="fobiGrid">
+        {% for fobi in fobiler %}
+        <div class="fobi-kart" data-fobi-id="{{ fobi.id }}" data-fobi-isim="{{ fobi.isim }}">
+            <div class="tik-isaretli">✓</div>
+            <img src="{{ url_for('static', filename='fobiler/' + fobi.isim + '.jpg') }}" alt="{{ fobi.isim }}" class="fobi-resim">
+            <div class="fobi-isim">{{ fobi.isim }}</div>
+            <div class="fobi-aciklama">{{ fobi.aciklama }}</div>
+        </div>
+        {% endfor %}
+    </div>
+    
+    <div class="uyari-mesaji" id="uyariMesaji">
+        <h2>Uyarı</h2>
+        <p id="uyariMetni"></p>
+        <button onclick="uyariKapat()">Tamam</button>
+    </div>
+    
+    <script>
+        let secilifobiler = [];
+        const maxfobiSayisi = 10;
+        const minfobiSayisi = 1;
+        
+        const fobiKartlari = document.querySelectorAll('.fobi-kart');
+        const secimSayisiElement = document.getElementById('secimSayisi');
+        const devamButonu = document.getElementById('devamButonu');
+        const aramaKutusu = document.getElementById('aramaKutusu');
+        
+        fobiKartlari.forEach(kart => {
+            kart.addEventListener('click', function() {
+                const fobiId = parseInt(this.getAttribute('data-fobi-id'));
+                
+                if (secilifobiler.includes(fobiId)) {
+                    secilifobiler = secilifobiler.filter(id => id !== fobiId);
+                    this.classList.remove('secili');
+                } else {
+                    if (secilifobiler.length >= maxfobiSayisi) {
+                        uyariGoster('En fazla ' + maxfobiSayisi + ' fobi seçebilirsiniz!');
+                        return;
+                    }
+                    secilifobiler.push(fobiId);
+                    this.classList.add('secili');
+                }
+                
+                secimSayisiGuncelle();
+            });
+        });
+        
+        function secimSayisiGuncelle() {
+            secimSayisiElement.textContent = secilifobiler.length;
+            
+            if (secilifobiler.length >= minfobiSayisi && secilifobiler.length <= maxfobiSayisi) {
+                devamButonu.disabled = false;
+            } else {
+                devamButonu.disabled = true;
+            }
+        }
+        
+        aramaKutusu.addEventListener('input', function() {
+            const aramaMetni = this.value.trim().toLowerCase();
+
+            fobiKartlari.forEach(kart => {
+                const fobiIsmi = (kart.getAttribute('data-fobi-isim') || '').toLowerCase();
+                const aciklamaElem = kart.querySelector('.fobi-aciklama');
+                const fobiAciklama = aciklamaElem ? aciklamaElem.textContent.toLowerCase() : '';
+
+                if (aramaMetni === '') {
+                    kart.style.display = 'block';
+                    return;
+                }
+
+                if (fobiIsmi.includes(aramaMetni) || fobiAciklama.includes(aramaMetni)) {
+                    kart.style.display = 'block';
+                } else {
+                    kart.style.display = 'none';
+                }
+            });
+        });
+        
+        devamButonu.addEventListener('click', function() {
+            if (secilifobiler.length < minfobiSayisi || secilifobiler.length > maxfobiSayisi) {
+                uyariGoster('En az ' + minfobiSayisi + ' ve en fazla ' + maxfobiSayisi + ' fobi seçmelisiniz!');
+                return;
+            }
+            
+            fetch('/fobi-kaydet', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    secili_fobiler: secilifobiler
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.basarili) {
+                    window.location.href = '/eslesme';
+                }
+            })
+            .catch(error => {
+                uyariGoster('Bir hata oluştu: ' + error);
+            });
+        });
+        
+        function uyariGoster(mesaj) {
+            document.getElementById('uyariMetni').textContent = mesaj;
+            document.getElementById('uyariMesaji').classList.add('goster');
+        }
+        
+        function uyariKapat() {
+            document.getElementById('uyariMesaji').classList.remove('goster');
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dizi Seçimi</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #000000;
+            color: #ffffff;
+            padding: 20px;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+        }
+        
+        .header h1 {
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            color: #dc2626;
+            font-size: 16px;
+        }
+        
+        .arama-bolumu {
+            max-width: 1200px;
+            margin: 0 auto 30px;
+            position: sticky;
+            top: 20px;
+            z-index: 100;
+            background: #1a1a1a;
+            padding: 20px;
+            border-radius: 10px;
+            border: 1px solid #dc2626;
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+        
+        .arama-kutusu {
+            flex: 1;
+            padding: 12px 20px;
+            background: #0a0a0a;
+            border: 1px solid #333333;
+            border-radius: 8px;
+            color: #ffffff;
+            font-size: 16px;
+        }
+        
+        .arama-kutusu:focus {
+            outline: none;
+            border-color: #dc2626;
+        }
+        
+        .secim-sayaci {
+            color: #dc2626;
+            font-weight: 600;
+            font-size: 18px;
+            white-space: nowrap;
+        }
+        
+        .devam-butonu {
+            padding: 12px 30px;
+            background: #dc2626;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s;
+            white-space: nowrap;
+        }
+        
+        .devam-butonu:hover {
+            background: #b91c1c;
+        }
+        
+        .devam-butonu:disabled {
+            background: #555555;
+            cursor: not-allowed;
+        }
+        
+        .film-grid {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 25px;
+            padding: 20px;
+        }
+        
+        .film-kart {
+            cursor: pointer;
+            transition: transform 0.3s;
+            position: relative;
+        }
+        
+        .film-kart:hover {
+            transform: scale(1.1);
+            z-index: 10;
+        }
+        
+        .film-afis {
+            width: 100%;
+            height: 270px;
+            object-fit: cover;
+            border-radius: 10px;
+            border: 2px solid #333333;
+            transition: border-color 0.3s;
+        }
+        
+        .film-kart.secili .film-afis {
+            border-color: #22c55e;
+        }
+        
+        .tik-isaretli {
+            position: absolute;
+            top: 8px;
+            left: 8px;
+            width: 30px;
+            height: 30px;
+            background: #22c55e;
+            border-radius: 50%;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 18px;
+        }
+        
+        .film-kart.secili .tik-isaretli {
+            display: flex;
+        }
+        
+        .film-isim {
+            text-align: center;
+            margin-top: 10px;
+            font-size: 14px;
+            color: #cccccc;
+        }
+        
+        .uyari-mesaji {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: #1a1a1a;
+            padding: 30px 50px;
+            border-radius: 10px;
+            border: 2px solid #dc2626;
+            display: none;
+            z-index: 1000;
+            text-align: center;
+        }
+        
+        .uyari-mesaji.goster {
+            display: block;
+        }
+        
+        .uyari-mesaji h2 {
+            color: #dc2626;
+            margin-bottom: 15px;
+        }
+        
+        .uyari-mesaji button {
+            margin-top: 20px;
+            padding: 10px 30px;
+            background: #dc2626;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Dizi Seçimi</h1>
+        <p>Minimum 1 , Maksimum 10 tane en sevdiğiniz Dizileri seçin</p>
+    </div>
+    
+    <div class="arama-bolumu">
+        <input type="text" class="arama-kutusu" id="aramaKutusu" placeholder="Dizi ara...">
+        <span class="secim-sayaci"><span id="secimSayisi">0</span> / 10</span>
+        <button class="devam-butonu" id="devamButonu" disabled>Devam Et</button>
+    </div>
+    
+    <div class="film-grid" id="diziGrid">
+        {% for dizi in diziler %}
+        <div class="film-kart" data-dizi-id="{{ dizi.id }}" data-dizi-isim="{{ dizi.isim }}">
+            <div class="tik-isaretli">✓</div>
+            <img src="{{ dizi.afis }}" alt="{{ dizi.isim }}" class="film-afis">
+            <div class="film-isim">{{ dizi.isim }}</div>
+        </div>
+        {% endfor %}
+    </div>
+    
+    <div class="uyari-mesaji" id="uyariMesaji">
+        <h2>Uyarı</h2>
+        <p id="uyariMetni"></p>
+        <button onclick="uyariKapat()">Tamam</button>
+    </div>
+    
+    <script>
+        let seciliDiziler = [];
+        const maxDiziSayisi = 10;
+        const minDiziSayisi = 1;
+        
+        const diziKartlari = document.querySelectorAll('.film-kart');
+        const secimSayisiElement = document.getElementById('secimSayisi');
+        const devamButonu = document.getElementById('devamButonu');
+        const aramaKutusu = document.getElementById('aramaKutusu');
+        
+        diziKartlari.forEach(kart => {
+            kart.addEventListener('click', function() {
+                const diziId = parseInt(this.getAttribute('data-dizi-id'));
+                
+                if (seciliDiziler.includes(diziId)) {
+                    seciliDiziler = seciliDiziler.filter(id => id !== diziId);
+                    this.classList.remove('secili');
+                } else {
+                    if (seciliDiziler.length >= maxDiziSayisi) {
+                        uyariGoster('En fazla ' + maxDiziSayisi + ' dizi seçebilirsiniz!');
+                        return;
+                    }
+                    seciliDiziler.push(diziId);
+                    this.classList.add('secili');
+                }
+                
+                secimSayisiGuncelle();
+            });
+        });
+        
+        function secimSayisiGuncelle() {
+            secimSayisiElement.textContent = seciliDiziler.length;
+            
+            if (seciliDiziler.length >= minDiziSayisi && seciliDiziler.length <= maxDiziSayisi) {
+                devamButonu.disabled = false;
+            } else {
+                devamButonu.disabled = true;
+            }
+        }
+        
+        aramaKutusu.addEventListener('input', function() {
+            const aramaMetni = this.value.toLowerCase();
+            
+            diziKartlari.forEach(kart => {
+                const diziIsmi = kart.getAttribute('data-dizi-isim').toLowerCase();
+                
+                if (diziIsmi.includes(aramaMetni)) {
+                    kart.style.display = 'block';
+                } else {
+                    kart.style.display = 'none';
+                }
+            });
+        });
+        
+        devamButonu.addEventListener('click', function() {
+            if (seciliDiziler.length < minDiziSayisi || seciliDiziler.length > maxDiziSayisi) {
+                uyariGoster('En az ' + minDiziSayisi + ' ve en fazla ' + maxDiziSayisi + ' dizi seçmelisiniz!');
+                return;
+            }
+            
+            fetch('/dizi-kaydet', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    secili_diziler: seciliDiziler
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.basarili) {
+                    window.location.href = '/sarkilar';
+                }
+            })
+            .catch(error => {
+                uyariGoster('Bir hata oluştu: ' + error);
+            });
+        });
+        
+        function uyariGoster(mesaj) {
+            document.getElementById('uyariMetni').textContent = mesaj;
+            document.getElementById('uyariMesaji').classList.add('goster');
+        }
+        
+        function uyariKapat() {
+            document.getElementById('uyariMesaji').classList.remove('goster');
+        }
+    </script>
+</body>
+</html>

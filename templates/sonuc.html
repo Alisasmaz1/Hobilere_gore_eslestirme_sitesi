@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Eşleşme Sonuçları</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #000000;
+            color: #ffffff;
+            padding: 40px 20px;
+            overflow-x: hidden;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .best-match {
+            background: linear-gradient(135deg, #1a1a1a 0%, #2a0a0a 100%);
+            border: 2px solid #dc2626;
+            border-radius: 20px;
+            padding: 50px;
+            margin-bottom: 60px;
+            text-align: center;
+            opacity: 0;
+            transform: translateY(50px);
+            animation: slide-up 1s ease-out 0.3s forwards;
+            box-shadow: 0 20px 60px rgba(220, 38, 38, 0.4);
+        }
+        
+        @keyframes slide-up {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .best-match-badge {
+            display: inline-block;
+            background: #dc2626;
+            color: white;
+            padding: 10px 30px;
+            border-radius: 50px;
+            font-size: 14px;
+            font-weight: bold;
+            letter-spacing: 2px;
+            margin-bottom: 30px;
+            text-transform: uppercase;
+        }
+        
+        .best-match-percentage {
+            font-size: 80px;
+            font-weight: bold;
+            color: #dc2626;
+            margin-bottom: 20px;
+            text-shadow: 0 0 30px rgba(220, 38, 38, 0.8);
+        }
+        
+        .best-match-name {
+            font-size: 36px;
+            margin-bottom: 10px;
+        }
+        
+        .best-match-email {
+            font-size: 16px;
+            color: #999999;
+            margin-bottom: 30px;
+        }
+        
+        .best-match-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            text-align: left;
+            margin-top: 40px;
+        }
+        
+        .detail-box {
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(220, 38, 38, 0.3);
+            border-radius: 10px;
+            padding: 20px;
+        }
+        
+        .detail-title {
+            color: #dc2626;
+            font-size: 14px;
+            font-weight: bold;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+            letter-spacing: 1px;
+        }
+        
+        .detail-items {
+            color: #cccccc;
+            font-size: 14px;
+            line-height: 1.8;
+        }
+        
+        .detail-items span {
+            display: inline-block;
+            background: rgba(220, 38, 38, 0.2);
+            padding: 4px 12px;
+            border-radius: 15px;
+            margin: 4px 4px 4px 0;
+            font-size: 13px;
+        }
+        
+        .section-title {
+            text-align: center;
+            font-size: 28px;
+            margin: 80px 0 40px;
+            opacity: 0;
+            animation: fade-in 1s ease-out 1.5s forwards;
+        }
+        
+        @keyframes fade-in {
+            to {
+                opacity: 1;
+            }
+        }
+        
+        .section-subtitle {
+            text-align: center;
+            color: #999999;
+            font-size: 16px;
+            margin-bottom: 50px;
+            opacity: 0;
+            animation: fade-in 1s ease-out 1.7s forwards;
+        }
+
+        .matches-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 25px;
+            opacity: 0;
+            animation: fade-in 1s ease-out 2s forwards;
+        }
+        
+        .match-card {
+            background: #1a1a1a;
+            border: 1px solid #333333;
+            border-radius: 15px;
+            padding: 25px;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+        
+        .match-card:hover {
+            transform: translateY(-10px) scale(1.05);
+            border-color: #dc2626;
+            box-shadow: 0 15px 40px rgba(220, 38, 38, 0.3);
+        }
+        
+        .match-percentage {
+            font-size: 42px;
+            font-weight: bold;                                                                                                                                     
+            color: #dc2626;
+            margin-bottom: 15px;
+        }
+        
+        .match-name {
+            font-size: 20px;
+            margin-bottom: 5px;
+        }
+        
+        .match-email {
+            font-size: 13px;
+            color: #666666;
+            margin-bottom: 20px;
+        }
+        
+        .match-details {
+            font-size: 12px;
+            color: #999999;
+            border-top: 1px solid #333333;
+            padding-top: 15px;
+        }
+        
+        .match-category {
+            margin: 8px 0;
+        }
+        
+        .match-category strong {
+            color: #dc2626;
+        }
+        
+        .match-items {
+            display: inline;
+            color: #cccccc;
+        }
+        
+        @media (max-width: 768px) {
+            .best-match {
+                padding: 30px 20px;
+            }
+            
+            .best-match-percentage {
+                font-size: 60px;
+            }
+            
+            .best-match-name {
+                font-size: 28px;
+            }
+            
+            .matches-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        .search-container {
+            max-width: 600px;
+            margin: 60px auto 40px;
+            opacity: 0;
+            animation: fade-in 1s ease-out 2.2s forwards;
+        }
+
+        .search-box {
+            position: relative;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 18px 60px 18px 20px;
+            background: #1a1a1a;
+            border: 2px solid #333333;
+            border-radius: 50px;
+            font-size: 16px;
+            color: #ffffff;
+            transition: all 0.3s;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #dc2626;
+            box-shadow: 0 0 20px rgba(220, 38, 38, 0.3);
+        }
+
+        .search-input::placeholder {
+            color: #666666;
+        }
+
+        .search-icon {
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 20px;
+            color: #dc2626;
+            pointer-events: none;
+        }
+
+        .search-results-info {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 14px;
+            color: #999999;
+            display: none;
+        }
+
+        .match-card.hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        {% if sonuclar and sonuclar.en_iyi_eslesme %}
+        <div class="best-match">
+            <div class="best-match-badge">🏆 En İyi Eşleşme</div>
+            <div class="best-match-percentage">{{ sonuclar.en_iyi_eslesme.eslesme_orani }}%</div>
+            <div class="best-match-name">
+                {{ sonuclar.en_iyi_eslesme.ad }} {{ sonuclar.en_iyi_eslesme.soyad }}
+            </div>
+            <div class="best-match-email">{{ sonuclar.en_iyi_eslesme.email }}</div>
+            <div class="best-match-email">
+                {% if sonuclar.en_iyi_eslesme.cinsiyet == 'erkek' %}
+                    👨 Erkek
+                {% elif sonuclar.en_iyi_eslesme.cinsiyet == 'kadin' %}
+                    👩 Kadın
+                {% else %}
+                    ⭐ Diğer
+                {% endif %}
+            </div>
+            
+            <div class="best-match-details">
+                {% if sonuclar.en_iyi_eslesme.filmler %}
+                <div class="detail-box">
+                    <div class="detail-title">🎬 Filmler</div>
+                    <div class="detail-items">
+                        {% for film in sonuclar.en_iyi_eslesme.filmler %}
+                        <span>{{ film }}</span>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+                
+                {% if sonuclar.en_iyi_eslesme.diziler %}
+                <div class="detail-box">
+                    <div class="detail-title">📺 Diziler</div>
+                    <div class="detail-items">
+                        {% for dizi in sonuclar.en_iyi_eslesme.diziler %}
+                        <span>{{ dizi }}</span>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+                
+                {% if sonuclar.en_iyi_eslesme.sarkilar %}
+                <div class="detail-box">
+                    <div class="detail-title">🎵 Şarkılar</div>
+                    <div class="detail-items">
+                        {% for sarki in sonuclar.en_iyi_eslesme.sarkilar %}
+                        <span>{{ sarki }}</span>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+                
+                {% if sonuclar.en_iyi_eslesme.kitaplar %}
+                <div class="detail-box">
+                    <div class="detail-title">📚 Kitaplar</div>
+                    <div class="detail-items">
+                        {% for kitap in sonuclar.en_iyi_eslesme.kitaplar %}
+                        <span>{{ kitap }}</span>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+                
+                {% if sonuclar.en_iyi_eslesme.hobiler %}
+                <div class="detail-box">
+                    <div class="detail-title">🎯 Hobiler</div>
+                    <div class="detail-items">
+                        {% for hobi in sonuclar.en_iyi_eslesme.hobiler %}
+                        <span>{{ hobi }}</span>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+                
+                {% if sonuclar.en_iyi_eslesme.fobiler %}
+                <div class="detail-box">
+                    <div class="detail-title">😱 Fobiler</div>
+                    <div class="detail-items">
+                        {% for fobi in sonuclar.en_iyi_eslesme.fobiler %}
+                        <span>{{ fobi }}</span>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        {% if sonuclar.diger_eslesmeler %}
+        <div class="search-container">
+            <div class="search-box">
+                <input 
+                    type="text" 
+                    class="search-input" 
+                    id="searchInput" 
+                    placeholder="İsim veya email ile kullanıcı ara..."
+                    autocomplete="off"
+                >
+                <span class="search-icon">🔍</span>
+            </div>
+            <div class="search-results-info" id="searchInfo"></div>
+        </div>
+        {% endif %}
+        
+        {% if sonuclar.diger_eslesmeler %}
+        <div class="section-title">
+            {{ sonuclar.en_iyi_eslesme.ad }} {{ sonuclar.en_iyi_eslesme.soyad }} kişisinden sonra en çok eşleştiğiniz kişiler
+        </div>
+        <div class="section-subtitle">
+            Toplam {{ sonuclar.diger_eslesmeler|length }} kullanıcı bulundu
+        </div>
+        
+        <div class="matches-grid">
+            {% for kullanici in sonuclar.diger_eslesmeler %}
+            <div class="match-card">
+                <div class="match-percentage">{{ kullanici.eslesme_orani }}%</div>
+                <div class="match-name">{{ kullanici.ad }} {{ kullanici.soyad }}</div>
+                <div class="match-email">{{ kullanici.email }}</div>
+                
+                <div class="match-details">
+                    {% if kullanici.filmler %}
+                    <div class="match-category">
+                        <strong>🎬 Filmler:</strong>
+                        <span class="match-items">{{ kullanici.filmler|join(', ') }}</span>
+                    </div>
+                    {% endif %}
+                    
+                    {% if kullanici.diziler %}
+                    <div class="match-category">
+                        <strong>📺 Diziler:</strong>
+                        <span class="match-items">{{ kullanici.diziler|join(', ') }}</span>
+                    </div>
+                    {% endif %}
+                    
+                    {% if kullanici.sarkilar %}
+                    <div class="match-category">
+                        <strong>🎵 Şarkılar:</strong>
+                        <span class="match-items">{{ kullanici.sarkilar|join(', ') }}</span>
+                    </div>
+                    {% endif %}
+                    
+                    {% if kullanici.kitaplar %}
+                    <div class="match-category">
+                        <strong>📚 Kitaplar:</strong>
+                        <span class="match-items">{{ kullanici.kitaplar|join(', ') }}</span>
+                    </div>
+                    {% endif %}
+                    
+                    {% if kullanici.hobiler %}
+                    <div class="match-category">
+                        <strong>🎯 Hobiler:</strong>
+                        <span class="match-items">{{ kullanici.hobiler|join(', ') }}</span>
+                    </div>
+                    {% endif %}
+                    
+                    {% if kullanici.fobiler %}
+                    <div class="match-category">
+                        <strong>😱 Fobiler:</strong>
+                        <span class="match-items">{{ kullanici.fobiler|join(', ') }}</span>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+        
+        {% else %}
+        <div style="text-align: center; padding: 100px 20px;">
+            <h1>Henüz başka kullanıcı yok</h1>
+            <p style="color: #999999; margin-top: 20px;">Eşleşme yapabilmek için en az 2 kullanıcı olmalı.</p>
+        </div>
+        {% endif %}
+    </div>
+    <script>
+        const searchInput = document.getElementById('searchInput');
+        const searchInfo = document.getElementById('searchInfo');
+        const allCards = document.querySelectorAll('.match-card');
+        const bestMatchCard = document.querySelector('.best-match');
+        
+        const totalUsers = "{{ sonuclar.diger_eslesmeler|length + 1 }}"; 
+        
+        let isFirstLoad = true;
+        
+        if (searchInput) {
+            searchInput.addEventListener('input', function() {
+                const searchTerm = this.value.toLowerCase().trim();
+                
+                if (isFirstLoad) {
+                    isFirstLoad = false;
+                    if (bestMatchCard) {
+                        bestMatchCard.style.animation = 'none';
+                        bestMatchCard.style.opacity = '1';
+                        bestMatchCard.style.transform = 'translateY(0)';
+                    }
+                    allCards.forEach(card => {
+                        card.style.animation = 'none';
+                        card.style.opacity = '1';
+                    });
+                }
+                
+                if (searchTerm === '') {
+                    if (bestMatchCard) {
+                        bestMatchCard.style.display = 'block';
+                    }
+
+                    allCards.forEach(card => {
+                        card.classList.remove('hidden');
+                    });
+
+                    searchInfo.style.display = 'none';
+                    return;
+                }
+                
+                let foundCount = 0;
+
+                const bestMatchName = "{{ sonuclar.en_iyi_eslesme.ad }} {{ sonuclar.en_iyi_eslesme.soyad }}".toLowerCase();
+                const bestMatchEmail = "{{ sonuclar.en_iyi_eslesme.email }}".toLowerCase();
+                
+                if (bestMatchName.includes(searchTerm) || bestMatchEmail.includes(searchTerm)) {
+                    if (bestMatchCard) {
+                        bestMatchCard.style.display = 'block';
+                    }
+                    foundCount++;
+                } else {
+                    if (bestMatchCard) {
+                        bestMatchCard.style.display = 'none';
+                    }
+                }
+                
+                allCards.forEach(card => {
+                    const name = card.querySelector('.match-name').textContent.toLowerCase();
+                    const email = card.querySelector('.match-email').textContent.toLowerCase();
+                    
+                    if (name.includes(searchTerm) || email.includes(searchTerm)) {
+                        card.classList.remove('hidden');
+                        foundCount++;
+                    } else {
+                        card.classList.add('hidden');
+                    }
+                });
+
+                searchInfo.style.display = 'block';
+                
+                if (foundCount === 0) {
+                    searchInfo.textContent = '❌ Kullanıcı bulunamadı';
+                    searchInfo.style.color = '#dc2626';
+                } else if (foundCount === 1) {
+                    searchInfo.textContent = `✓ 1 kullanıcı bulundu`;
+                    searchInfo.style.color = '#22c55e';
+                } else {
+                    searchInfo.textContent = `✓ ${foundCount} kullanıcı bulundu`;
+                    searchInfo.style.color = '#22c55e';
+                }
+            });
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kayıt Ol</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #000000;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .container {
+            background: #1a1a1a;
+            padding: 50px 40px;
+            border-radius: 15px;
+            width: 550px;
+            border: 1px solid #dc2626;
+        }
+        
+        h1 {
+            text-align: center;
+            color: #ffffff;
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+        
+        .subtitle {
+            text-align: left;
+            background: rgba(220, 38, 38, 0.15);
+            border: 1px solid #dc2626;
+            padding: 15px;
+            border-radius: 8px;
+            color: #ffcccc;
+            margin-bottom: 35px;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            line-height: 1.4;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #cccccc;
+            font-size: 14px;
+        }
+        
+        input[type="text"],
+        input[type="email"],
+        input[type="number"] {
+            width: 100%;
+            padding: 14px;
+            background: #0a0a0a;
+            border: 1px solid #333333;
+            border-radius: 8px;
+            font-size: 16px;
+            color: #ffffff;
+            transition: border-color 0.3s;
+        }
+        input[type="date"] {
+            width: 100%;
+            padding: 14px;
+            background: #0a0a0a;
+            border: 1px solid #333333;
+            border-radius: 8px;
+            font-size: 16px;
+            color: #ffffff;
+            transition: border-color 0.3s;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        input[type="date"]:focus {
+            outline: none;
+            border-color: #dc2626;
+        }
+
+        input[type="date"]::-webkit-calendar-picker-indicator {
+            filter: invert(1);
+            cursor: pointer;
+        }
+
+        input[type="date"]::-webkit-datetime-edit-text,
+        input[type="date"]::-webkit-datetime-edit-month-field,
+        input[type="date"]::-webkit-datetime-edit-day-field,
+        input[type="date"]::-webkit-datetime-edit-year-field {
+            color: #ffffff;
+        }
+
+        input[type="date"]:invalid {
+            color: #666666;
+        }
+        
+        input:focus {
+            outline: none;
+            border-color: #dc2626;
+        }
+        
+        input::placeholder {
+            color: #666666;
+        }
+        
+        button {
+            width: 100%;
+            padding: 14px;
+            background: #dc2626;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s;
+            margin-top: 10px;
+        }
+        
+        button:hover {
+            background: #b91c1c;
+        }
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+        .yas-uyari {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: #1a1a1a;
+            padding: 40px 50px;
+            border-radius: 15px;
+            border: 2px solid #dc2626;
+            display: none;
+            z-index: 1000;
+            text-align: center;
+            box-shadow: 0 0 50px rgba(220, 38, 38, 0.5);
+        }
+
+        .yas-uyari.goster {
+            display: block;
+        }
+
+        .yas-uyari h2 {
+            color: #dc2626;
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+
+        .yas-uyari p {
+            color: #cccccc;
+            margin-bottom: 25px;
+            font-size: 16px;
+        }
+
+        .yas-uyari button {
+            padding: 12px 30px;
+            background: #dc2626;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .yas-uyari button:hover {
+            background: #b91c1c;
+        }
+
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            display: none;
+            z-index: 999;
+        }
+
+        .overlay.goster {
+            display: block;
+        }
+        select {
+            width: 100%;
+            padding: 14px;
+            background: #0a0a0a;
+            border: 1px solid #333333;
+            border-radius: 8px;
+            font-size: 16px;
+            color: #ffffff;
+            transition: border-color 0.3s;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            cursor: pointer;
+        }
+
+        select:focus {
+            outline: none;
+            border-color: #dc2626;
+        }
+
+        select option {
+            background: #1a1a1a;
+            color: #ffffff;
+        }
+
+        select option[value=""] {
+            color: #666666;
+        }
+    </style>
+</head>
+<body>
+    <div class="overlay" id="overlay"></div>
+    
+    <div class="yas-uyari" id="yasUyari">
+        <h2>⚠️ Yaş Sınırı</h2>
+        <p>Bu platforma kayıt olmak için 18 yaşından büyük olmalısınız.</p>
+        <button onclick="yasUyariKapat()">Anladım</button>
+    </div>
+    <div class="yas-uyari" id="emailUyari">
+        <h2>⚠️ Email Kayıtlı</h2>
+        <p>Bu email adresi zaten kayıtlı. Giriş yapmayı deneyin.</p>
+        <button onclick="emailUyariKapat()">Giriş Yap</button>
+    </div>
+    <div class="container">
+        <h1>Kayıt Ol</h1>
+        <div class="subtitle"><span style="font-size: 18px;">⚠️</span>
+            <span>Gireceğiniz bilgiler sizin karakteristik analiziniz açısından büyük önem taşımaktadır. Lütfen doğru bir şekilde doldurduğunuzdan emin olunuz.</span>
+        </div>
+        <form action="/kayit-ol" method="POST">
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="ad">Ad</label>
+                    <input type="text" id="ad" name="ad" required placeholder="Adınız">
+                </div>
+                
+                <div class="form-group">
+                    <label for="soyad">Soyad</label>
+                    <input type="text" id="soyad" name="soyad" required placeholder="Soyadınız">
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" required placeholder="ornek@email.com">
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="dogum_tarihi">Doğum Tarihi</label>
+                    <input type="date" id="dogum_tarihi" name="dogum_tarihi" required max="" min="1900-01-01">
+                </div>
+                
+                <div class="form-group">
+                    <label for="cinsiyet">Cinsiyet</label>
+                    <select id="cinsiyet" name="cinsiyet" required>
+                        <option value="">Seçiniz</option>
+                        <option value="erkek">Erkek</option>
+                        <option value="kadin">Kadın</option>
+                        <option value="diger">Diğer</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="bolge">Yaşadığınız Bölge</label>
+                    <select id="bolge" name="bolge" required>
+                        <option value="">Seçiniz</option>
+                        <option value="marmara">Marmara</option>
+                        <option value="ege">Ege</option>
+                        <option value="akdeniz">Akdeniz</option>
+                        <option value="ic-anadolu">İç Anadolu</option>
+                        <option value="karadeniz">Karadeniz</option>
+                        <option value="dogu-anadolu">Doğu Anadolu</option>
+                        <option value="guneydogu-anadolu">Güneydoğu Anadolu</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="egitim">Eğitim Düzeyi</label>
+                    <select id="egitim" name="egitim" required>
+                        <option value="">Seçiniz</option>
+                        <option value="ilkokul">İlkokul</option>
+                        <option value="ortaokul">Ortaokul</option>
+                        <option value="lise">Lise</option>
+                        <option value="onlisans">Önlisans</option>
+                        <option value="lisans">Lisans</option>
+                        <option value="yuksek-lisans">Yüksek Lisans</option>
+                        <option value="doktora">Doktora</option>
+                    </select>
+                </div>
+            </div>
+            
+            <button type="submit">Kod Gönder</button>
+
+            <div style="text-align: center; margin-top: 20px; color: #cccccc; font-size: 14px;">
+                Hesabın var mı? <a href="/giris" style="color: #dc2626; text-decoration: none; font-weight: 600;">Giriş Yap</a>
+            </div>
+        </form>
+    </div>
+    <script>
+        function yasUyariKapat() {
+            document.getElementById('yasUyari').classList.remove('goster');
+            document.getElementById('overlay').classList.remove('goster');
+        }
+        
+
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('hata') === 'yas') {
+            document.getElementById('yasUyari').classList.add('goster');
+            document.getElementById('overlay').classList.add('goster');
+        }
+        
+    </script>
+    <script>
+        const bugun = new Date();
+        const yil = bugun.getFullYear();
+        const ay = String(bugun.getMonth() + 1).padStart(2, '0');
+        const gun = String(bugun.getDate()).padStart(2, '0');
+        const bugunTarih = `${yil}-${ay}-${gun}`;
+        
+        document.getElementById('dogum_tarihi').setAttribute('max', bugunTarih);
+    </script>
+    <script>
+    function emailUyariKapat() {
+        window.location.href = '/giris';
+    }
+
+    if (urlParams.get('hata') === 'email_kayitli') {
+        document.getElementById('emailUyari').classList.add('goster');
+        document.getElementById('overlay').classList.add('goster');
+    }
+    </script>
+</body>
+</html>

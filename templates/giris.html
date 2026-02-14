@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Giriş Yap</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #000000;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            display: none;
+            z-index: 999;
+        }
+        
+        .overlay.goster {
+            display: block;
+        }
+        
+        .container {
+            background: #1a1a1a;
+            padding: 50px 40px;
+            border-radius: 15px;
+            width: 450px;
+            border: 1px solid #dc2626;
+        }
+        
+        h1 {
+            text-align: center;
+            color: #ffffff;
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+        
+        .subtitle {
+            text-align: center;
+            color: #dc2626;
+            margin-bottom: 35px;
+            font-size: 14px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #cccccc;
+            font-size: 14px;
+        }
+        
+        input[type="email"],
+        input[type="password"] {
+            width: 100%;
+            padding: 14px;
+            background: #0a0a0a;
+            border: 1px solid #333333;
+            border-radius: 8px;
+            font-size: 16px;
+            color: #ffffff;
+            transition: border-color 0.3s;
+        }
+        
+        input:focus {
+            outline: none;
+            border-color: #dc2626;
+        }
+        
+        input::placeholder {
+            color: #666666;
+        }
+        
+        button {
+            width: 100%;
+            padding: 14px;
+            background: #dc2626;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s;
+            margin-top: 10px;
+        }
+        
+        button:hover {
+            background: #b91c1c;
+        }
+        
+        .kayit-link {
+            text-align: center;
+            margin-top: 20px;
+            color: #cccccc;
+            font-size: 14px;
+        }
+        
+        .kayit-link a {
+            color: #dc2626;
+            text-decoration: none;
+            font-weight: 600;
+        }
+        
+        .hata-mesaji {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: #1a1a1a;
+            padding: 40px 50px;
+            border-radius: 15px;
+            border: 2px solid #dc2626;
+            display: none;
+            z-index: 1000;
+            text-align: center;
+            box-shadow: 0 0 50px rgba(220, 38, 38, 0.5);
+        }
+        
+        .hata-mesaji.goster {
+            display: block;
+        }
+        
+        .hata-mesaji h2 {
+            color: #dc2626;
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+        
+        .hata-mesaji p {
+            color: #cccccc;
+            margin-bottom: 25px;
+            font-size: 16px;
+        }
+        
+        .hata-mesaji button {
+            padding: 12px 30px;
+            background: #dc2626;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background 0.3s;
+            margin-top: 0;
+            width: auto;
+        }
+        
+        .hata-mesaji button:hover {
+            background: #b91c1c;
+        }
+        .basari-mesaji {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: #1a1a1a;
+            padding: 40px 50px;
+            border-radius: 15px;
+            border: 2px solid #22c55e;
+            display: none;
+            z-index: 1000;
+            text-align: center;
+            box-shadow: 0 0 50px rgba(34, 197, 94, 0.5);
+        }
+
+        .basari-mesaji.goster {
+            display: block;
+        }
+
+        .basari-mesaji h2 {
+            color: #22c55e;
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+
+        .basari-mesaji p {
+            color: #cccccc;
+            margin-bottom: 25px;
+            font-size: 16px;
+        }
+
+        .basari-mesaji button {
+            padding: 12px 30px;
+            background: #22c55e;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background 0.3s;
+            margin-top: 0;
+            width: auto;
+        }
+
+        .basari-mesaji button:hover {
+            background: #16a34a;
+        }
+    </style>
+</head>
+<body>
+    <div class="overlay" id="overlay"></div>
+    
+    <div class="hata-mesaji" id="hataMesaji">
+        <h2>⚠️ Giriş Başarısız</h2>
+        <p>Email veya şifre hatalı. Lütfen tekrar deneyin.</p>
+        <button onclick="hataKapat()">Tamam</button>
+    </div>
+
+    <div class="basari-mesaji" id="basariMesaji">
+        <h2>✅ Kayıt Başarılı!</h2>
+        <p>Hesabınız başarıyla oluşturuldu. Artık giriş yapabilirsiniz.</p>
+        <button onclick="basariKapat()">Giriş Yap</button>
+    </div>
+    
+    <div class="container">
+        <h1>Giriş Yap</h1>
+        <div class="subtitle">Hesabına erişim sağla</div>
+        
+        <form action="/giris-yap" method="POST">
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" required placeholder="ornek@email.com">
+            </div>
+            
+            <div class="form-group">
+                <label for="sifre">Şifre</label>
+                <input type="password" id="sifre" name="sifre" required placeholder="Şifreniz">
+            </div>
+            
+            <button type="submit">Giriş Yap</button>
+        </form>
+        
+        <div class="kayit-link">
+            Hesabın yok mu? <a href="/">Kayıt Ol</a>
+        </div>
+    </div>
+    
+    <script>
+        function hataKapat() {
+            document.getElementById('hataMesaji').classList.remove('goster');
+            document.getElementById('overlay').classList.remove('goster');
+        }
+        
+        function basariKapat() {
+            document.getElementById('basariMesaji').classList.remove('goster');
+            document.getElementById('overlay').classList.remove('goster');
+        }
+        
+        const urlParams = new URLSearchParams(window.location.search);
+        
+        if (urlParams.get('hata') === 'yanlis') {
+            document.getElementById('hataMesaji').classList.add('goster');
+            document.getElementById('overlay').classList.add('goster');
+        }
+        
+        if (urlParams.get('basarili') === 'true') {
+            document.getElementById('basariMesaji').classList.add('goster');
+            document.getElementById('overlay').classList.add('goster');
+        }
+    </script>
+</body>
+</html>

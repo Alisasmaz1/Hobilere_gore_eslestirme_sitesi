@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kitap Seçimi</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #000000;
+            color: #ffffff;
+            padding: 20px;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+        }
+        
+        .header h1 {
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            color: #dc2626;
+            font-size: 16px;
+        }
+        
+        .arama-bolumu {
+            max-width: 1200px;
+            margin: 0 auto 30px;
+            position: sticky;
+            top: 20px;
+            z-index: 100;
+            background: #1a1a1a;
+            padding: 20px;
+            border-radius: 10px;
+            border: 1px solid #dc2626;
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+        
+        .arama-kutusu {
+            flex: 1;
+            padding: 12px 20px;
+            background: #0a0a0a;
+            border: 1px solid #333333;
+            border-radius: 8px;
+            color: #ffffff;
+            font-size: 16px;
+        }
+        
+        .arama-kutusu:focus {
+            outline: none;
+            border-color: #dc2626;
+        }
+        
+        .secim-sayaci {
+            color: #dc2626;
+            font-weight: 600;
+            font-size: 18px;
+            white-space: nowrap;
+        }
+        
+        .devam-butonu {
+            padding: 12px 30px;
+            background: #dc2626;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s;
+            white-space: nowrap;
+        }
+        
+        .devam-butonu:hover {
+            background: #b91c1c;
+        }
+        
+        .devam-butonu:disabled {
+            background: #555555;
+            cursor: not-allowed;
+        }
+        
+        .kitap-grid {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 25px;
+            padding: 20px;
+        }
+        
+        .kitap-kart {
+            cursor: pointer;
+            transition: transform 0.3s;
+            position: relative;
+        }
+        
+        .kitap-kart:hover {
+            transform: scale(1.1);
+            z-index: 10;
+        }
+        
+        .kitap-kapak {
+            width: 100%;
+            height: 270px;
+            object-fit: cover;
+            border-radius: 10px;
+            border: 2px solid #333333;
+            transition: border-color 0.3s;
+        }
+        
+        .kitap-kart.secili .kitap-kapak {
+            border-color: #22c55e;
+        }
+        
+        .tik-isaretli {
+            position: absolute;
+            top: 8px;
+            left: 8px;
+            width: 30px;
+            height: 30px;
+            background: #22c55e;
+            border-radius: 50%;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 18px;
+        }
+        
+        .kitap-kart.secili .tik-isaretli {
+            display: flex;
+        }
+        
+        .kitap-isim {
+            text-align: center;
+            margin-top: 10px;
+            font-size: 14px;
+            color: #cccccc;
+        }
+        
+        .uyari-mesaji {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: #1a1a1a;
+            padding: 30px 50px;
+            border-radius: 10px;
+            border: 2px solid #dc2626;
+            display: none;
+            z-index: 1000;
+            text-align: center;
+        }
+        
+        .uyari-mesaji.goster {
+            display: block;
+        }
+        
+        .uyari-mesaji h2 {
+            color: #dc2626;
+            margin-bottom: 15px;
+        }
+        
+        .uyari-mesaji button {
+            margin-top: 20px;
+            padding: 10px 30px;
+            background: #dc2626;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Kitap Seçimi</h1>
+        <p>Minimum 1 , Maksimum 10 tane en sevdiğiniz Kitapları seçin</p>
+    </div>
+    
+    <div class="arama-bolumu">
+        <input type="text" class="arama-kutusu" id="aramaKutusu" placeholder="Kitap ara...">
+        <span class="secim-sayaci"><span id="secimSayisi">0</span> / 10</span>
+        <button class="devam-butonu" id="devamButonu" disabled>Devam Et</button>
+    </div>
+    
+    <div class="kitap-grid" id="kitapGrid">
+        {% for kitap in kitaplar %}
+        <div class="kitap-kart" data-kitap-id="{{ kitap.id }}" data-kitap-isim="{{ kitap.isim }}">
+            <div class="tik-isaretli">✓</div>
+            <img src="{{ url_for('static', filename='kitaplar/' + kitap.kapak) }}" alt="{{ kitap.isim }}" class="kitap-kapak">
+            <div class="kitap-isim">{{ kitap.isim }}</div>
+        </div>
+        {% endfor %}
+    </div>
+    
+    <div class="uyari-mesaji" id="uyariMesaji">
+        <h2>Uyarı</h2>
+        <p id="uyariMetni"></p>
+        <button onclick="uyariKapat()">Tamam</button>
+    </div>
+    
+    <script>
+        let seciliKitaplar = [];
+        const maxKitapSayisi = 10;
+        const minKitapSayisi = 1;
+        
+        const kitapKartlari = document.querySelectorAll('.kitap-kart');
+        const secimSayisiElement = document.getElementById('secimSayisi');
+        const devamButonu = document.getElementById('devamButonu');
+        const aramaKutusu = document.getElementById('aramaKutusu');
+        
+        kitapKartlari.forEach(kart => {
+            kart.addEventListener('click', function() {
+                const kitapId = parseInt(this.getAttribute('data-kitap-id'));
+                
+                if (seciliKitaplar.includes(kitapId)) {
+                    seciliKitaplar = seciliKitaplar.filter(id => id !== kitapId);
+                    this.classList.remove('secili');
+                } else {
+                    if (seciliKitaplar.length >= maxKitapSayisi) {
+                        uyariGoster('En fazla ' + maxKitapSayisi + ' kitap seçebilirsiniz!');
+                        return;
+                    }
+                    seciliKitaplar.push(kitapId);
+                    this.classList.add('secili');
+                }
+                
+                secimSayisiGuncelle();
+            });
+        });
+        
+        function secimSayisiGuncelle() {
+            secimSayisiElement.textContent = seciliKitaplar.length;
+            
+            if (seciliKitaplar.length >= minKitapSayisi && seciliKitaplar.length <= maxKitapSayisi) {
+                devamButonu.disabled = false;
+            } else {
+                devamButonu.disabled = true;
+            }
+        }
+        
+        aramaKutusu.addEventListener('input', function() {
+            const aramaMetni = this.value.toLowerCase();
+            
+            kitapKartlari.forEach(kart => {
+                const kitapIsmi = kart.getAttribute('data-kitap-isim').toLowerCase();
+                
+                if (kitapIsmi.includes(aramaMetni)) {
+                    kart.style.display = 'block';
+                } else {
+                    kart.style.display = 'none';
+                }
+            });
+        });
+        
+        devamButonu.addEventListener('click', function() {
+            if (seciliKitaplar.length < minKitapSayisi || seciliKitaplar.length > maxKitapSayisi) {
+                uyariGoster('En az ' + minKitapSayisi + ' ve en fazla ' + maxKitapSayisi + ' kitap seçmelisiniz!');
+                return;
+            }
+            
+            fetch('/kitap-kaydet', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    secili_kitaplar: seciliKitaplar
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.basarili) {
+                    window.location.href = '/hobiler'; 
+                }
+            })
+            .catch(error => {
+                uyariGoster('Bir hata oluştu: ' + error);
+            });
+        });
+        
+        function uyariGoster(mesaj) {
+            document.getElementById('uyariMetni').textContent = mesaj;
+            document.getElementById('uyariMesaji').classList.add('goster');
+        }
+        
+        function uyariKapat() {
+            document.getElementById('uyariMesaji').classList.remove('goster');
+        }
+    </script>
+</body>
+</html>
