@@ -42,4 +42,4 @@ Projeyi kendi bilgisayarınızda çalıştırmak için aşağıdaki adımları i
 
 ## 📎 Not
 
-> ⚠️ **Önemli:** Veritabanı şifreleri güvenlik nedeniyle repoya dahil edilmemiştir. Projeyi çalıştırmadan önce veritabanı ayarlarınızı (`db_config` vb.) kendi yerel sunucunuza göre doğru şekilde yapılandırmanız gerekmektedir.
+> ⚠️ **Önemli:** Veritabanı şifreleri güvenlik nedeniyle repoya dahil edilmemiştir. Projeyi çalıştırmadan önce veritabanı ayarlarınızı (`db_config` vb.) kendi yerel sunucunuza göre doğru şekilde yapılandırmanız gerekmektedir.Ayrıca veri tabanındaki tüm insanlar ve verileri sahte olup sadece eşleşme sisteminin sonuç kısmını gösterebilmek amacıyla yazılmışlardır
