@@ -38,7 +38,7 @@ Projeyi kendi bilgisayarınızda çalıştırmak için aşağıdaki adımları i
     ```
 2.  Proje klasörü içinde bulunan `database.sql` dosyasını kendi MySQL veritabanınıza import edin.
 3.  Kod içerisindeki veritabanı bağlantı bilgilerini (host, user, password, db_name) kendi sisteminize göre düzenleyin.
-4.  Ana Python dosyasını (`app.py` veya `main.py`) çalıştırarak uygulamayı başlatın.
+4.  Ana Python dosyasını (`main.py`) çalıştırarak uygulamayı başlatın.
 
 ## 📎 Not
 
