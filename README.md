@@ -1,52 +1,45 @@
-Hobilere Göre Eşleştirme Sitesi
-📌 Proje Hakkında
+# Hobilere Göre Eşleştirme Sitesi
 
-Bu proje, kullanıcıların ilgi alanlarını analiz ederek kişiler arasında bir benzerlik oranı hesaplayan web tabanlı bir uygulamadır. Sistem, kullanıcıların girdikleri verileri karşılaştırarak iki kişi arasında 0 ile 100 arasında bir eşleşme yüzdesi üretir.
+## 📌 Proje Hakkında
 
-Amaç, ortak ilgi alanlarına sahip kullanıcıları tespit etmek ve aralarındaki uyum oranını sayısal olarak göstermektir.
+Bu proje, kullanıcıların ilgi alanlarını analiz ederek kişiler arasında bir benzerlik oranı hesaplayan web tabanlı bir uygulamadır. Sistem, kullanıcıların girdikleri verileri karşılaştırarak iki kişi arasında **0 ile 100** arasında bir eşleşme yüzdesi üretir.
 
-⚙️ Nasıl Çalışır?
+**Amaç:** Ortak ilgi alanlarına sahip kullanıcıları tespit etmek ve aralarındaki uyum oranını sayısal olarak göstermektir.
 
-Kullanıcılardan şu kategorilerde veriler alınır:
+## ⚙️ Nasıl Çalışır?
 
-Film tercihleri
+Kullanıcılardan aşağıdaki kategorilerde veriler toplanır:
 
-Kitap tercihleri
+- 🎬 **Film tercihleri**
+- 📚 **Kitap tercihleri**
+- 📺 **Dizi tercihleri**
+- 🎨 **Hobiler**
+- 🕷️ **Fobiler**
+- 🎵 **Şarkılar / Müzik tercihleri**
 
-Dizi tercihleri
+Girilen veriler sistem tarafından analiz edilir. Ortak ve benzer içerikler belirlenerek özel bir eşleşme algoritması üzerinden yüzdelik bir sonuç hesaplanır. Sonuç olarak kullanıcılar arası uyum oranı **%0 – %100** arası bir değer olarak ekrana yansıtılır.
 
-Hobiler
+## 🛠 Kullanılan Teknolojiler
 
-Fobiler
+Projenin geliştirilmesinde aşağıdaki teknolojiler kullanılmıştır:
 
-Şarkılar / müzik tercihleri
+*   **Python** (Backend algoritması)
+*   **MySQL** (Veritabanı yönetimi)
+*   **HTML** (Arayüz iskeleti)
+*   **CSS** (Tasarım ve stil)
 
-Girilen veriler sistem tarafından analiz edilir. Ortak ve benzer içerikler belirlenerek bir eşleşme algoritması üzerinden yüzdelik bir sonuç hesaplanır.
+## 🚀 Kurulum ve Çalıştırma
 
-Sonuç olarak kullanıcılar arası uyum oranı 0–100 arası bir değer olarak gösterilir.
+Projeyi kendi bilgisayarınızda çalıştırmak için aşağıdaki adımları izleyin:
 
-🛠 Kullanılan Teknolojiler
+1.  Projeyi indirin veya terminal üzerinden klonlayın:
+    ```bash
+    git clone https://github.com/kullaniciadi/proje-adi.git
+    ```
+2.  Proje klasörü içinde bulunan `database.sql` dosyasını kendi MySQL veritabanınıza import edin.
+3.  Kod içerisindeki veritabanı bağlantı bilgilerini (host, user, password, db_name) kendi sisteminize göre düzenleyin.
+4.  Ana Python dosyasını (`app.py` veya `main.py`) çalıştırarak uygulamayı başlatın.
 
-Python
+## 📎 Not
 
-MySQL
-
-HTML
-
-CSS
-
-🚀 Kurulum ve Çalıştırma
-
-Projeyi indirin veya klonlayın.
-
-Proje içinde bulunan database.sql dosyasını kendi MySQL veritabanınıza import edin.
-
-Kod içerisindeki veritabanı bağlantı bilgilerini kendi sisteminize göre düzenleyin.
-
-Ana Python dosyasını çalıştırarak uygulamayı başlatın.
-
-📎 Not
-
-Veritabanı şifreleri güvenlik nedeniyle repoya dahil edilmemiştir.
-
-Projeyi çalıştırmadan önce veritabanı ayarlarınızı doğru şekilde yapılandırmanız gerekir.
+> ⚠️ **Önemli:** Veritabanı şifreleri güvenlik nedeniyle repoya dahil edilmemiştir. Projeyi çalıştırmadan önce veritabanı ayarlarınızı (`db_config` vb.) kendi yerel sunucunuza göre doğru şekilde yapılandırmanız gerekmektedir.
