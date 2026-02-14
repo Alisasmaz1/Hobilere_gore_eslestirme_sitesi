@@ -9,6 +9,14 @@ import mysql.connector
 from mysql.connector import Error
 import uuid 
 from esleme_algoritma import GelismisHibritEslesmeMotoru
+from dotenv import load_dotenv
+
+load_dotenv()
+
+DB_HOST = os.getenv("DB_HOST")
+DB_USER = os.getenv("DB_USER")
+DB_PASSWORD = os.getenv("DB_PASSWORD")
+DB_NAME = os.getenv("DB_NAME")
 
 eslesme_motoru = None
 
@@ -29,10 +37,10 @@ def motor_baslat():
     
     return True
 DB_CONFIG = {
-    'host': 'localhost',
-    'user': 'root',
-    'password': 'ali173422',
-    'database': 'esleme_sistemi'
+    'host': DB_HOST,
+    'user': DB_USER,
+    'password': DB_PASSWORD,
+    'database': DB_NAME
 }
 
 def veritabani_baglantisi():
